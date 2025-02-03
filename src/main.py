@@ -1,9 +1,15 @@
+import os
 import telebot
 from telebot import types
 from telebot.types import InputMediaPhoto
 
+ASSETS_PATH = f'{os.getcwd()}/assets'
+
 API_TOKEN = '7042315153:AAGfmwrY094mLYZQsS4_82QFJDRps1IDLVE'  
 bot = telebot.TeleBot(API_TOKEN)
+
+def get_asset(name: str):
+    return open(f'{ASSETS_PATH}/{name}', 'rb')
 
 keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
 keyboard.add(types.KeyboardButton("Зробити замовлення💧🧽"))
@@ -29,7 +35,6 @@ order_keyboard1.add(types.InlineKeyboardButton("Хімчистки матрац�
 order_keyboard1.add(types.InlineKeyboardButton("Хімчистки дитячих візочків та автокрісел 📕📄",callback_data="price3"))
 order_keyboard1.add(types.InlineKeyboardButton("Пральня 📕📄",callback_data="price4"))
 
-
 order_keyboard2 = types.InlineKeyboardMarkup()
 order_keyboard2.add(types.InlineKeyboardButton("Розрахувати вартість💰💳", callback_data="order_product_5"))
 order_keyboard2.add(types.InlineKeyboardButton("Підтвердити замовлення✅", callback_data="confirm_order"))
@@ -52,8 +57,7 @@ price_selection_keyboard.add(types.InlineKeyboardButton("Довгий ворс, 
 price_selection_keyboard.add(types.InlineKeyboardButton("Назад⬅️", callback_data="back_to_order"))
 
 user_data = {}
-admin_chat_id = 5299479931  
-
+admin_chat_id = 5299479931
 
 services_map = {
     "order_product_1": "Замовити прання килима",
@@ -65,15 +69,13 @@ services_map = {
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
-    photo = open('1697313260483922.jpg', 'rb')  
+    photo = get_asset('1697313260483922.jpg')
     bot.send_photo(message.chat.id, photo,
                    caption=f"Привіт! Я бот-помічник компанії Аква Клін.\n"
                            f"Я допоможу Вам переглянути наші послуги та зробити замовлення. "
                            f"{message.from_user.first_name} {message.from_user.last_name}\n"
                            f"Ваш ID: {message.from_user.id}",
                    parse_mode="HTML", reply_markup=keyboard)
-
-
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def handle_text(message):
@@ -82,13 +84,10 @@ def handle_text(message):
     elif message.text == "Зробити замовлення💧🧽":
         bot.send_message(message.chat.id, "Виберіть послугу для замовлення:", reply_markup=order_keyboard)
     elif message.text == "Інформація про послуги📝":
-        bot.send_message(message.chat.id, "Ось інформація про наші послуги...",reply_markup= order_keyboard3)
+        bot.send_message(message.chat.id, "Ось інформація про наші послуги...",reply_markup=order_keyboard3)
     elif message.text == "Підтримка📞📱":
         bot.send_message(message.chat.id, "Ось контактна інформація для підтримки:\n<b>+380980474746</b>",
                          parse_mode="HTML")
-
-    
-
     elif message.text == "Наш Instagram":
         bot.send_message(message.chat.id, "Перейдіть на наш Instagram за посиланням: https://www.instagram.com/akva_klin?igsh=bzg1NzQ3c3JucG92")
     elif message.text == "Наш Facebook":
@@ -96,8 +95,6 @@ def handle_text(message):
     else:
         if message.from_user.id in user_data and user_data[message.from_user.id].get("step") == "enter_dimensions":
             handle_dimensions(message)
-    
-
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_query(call):
@@ -133,7 +130,7 @@ def handle_query(call):
                          "Ви можете бути впевнені, наші засоби для чистки є повністю безпечними для Ваших діток.")
     elif call.data == "info5":
         bot.send_message(call.message.chat.id, 
-                         "Наша пральня використовує стандартний метод прання,що поєднує у собі очищення за допомогою води із застосуванням  миючих засобів та плямовивідників.Ефективно видаляємо будь-яке забруднення та сушимо за допомогою сучасних сушильних машин.")
+                         "Наша пральня використовує стандартний метод прання,що поєднує у собі очищення за допомогою води із застосуванням миючих засобів та плямовивідників.Ефективно видаляємо будь-яке забруднення та сушимо за допомогою сучасних сушильних машин.")
     elif call.data == "order_product_10":
         bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="Виберіть дію:",
                               reply_markup=order_keyboard2)
@@ -164,7 +161,6 @@ def handle_query(call):
             bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                   text="Виберіть послугу для замовлення:", reply_markup=order_keyboard)
 
- 
     if call.data == "order_product_5":
         bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                               text="Оберіть ціну для розрахунку:", reply_markup=price_selection_keyboard)
@@ -188,44 +184,34 @@ def handle_query(call):
                               text="Виберіть дію:", reply_markup=order_keyboard2)
 
     elif call.data == "confirm_order":
-        
         bot.send_message(chat_id, "Натисніть на кнопку, щоб надати номер телефону",
                          reply_markup=types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
                              types.KeyboardButton("Надати номер телефону", request_contact=True)
                          ))
     elif call.data == "price":
-        
-        with open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/коври.jpg', 'rb') as photo:
-            bot.send_photo(chat_id, photo)
+        bot.send_photo(chat_id, get_asset('коври.jpg'))
     elif call.data == "price1":
-        
-        with open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/меблі.jpg', 'rb') as photo:
-            bot.send_photo(chat_id, photo)
+        bot.send_photo(chat_id, get_asset('меблі.jpg'))
     elif call.data == "price2":
-    
-        with open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/матраси.jpg', 'rb') as photo:
-            bot.send_photo(chat_id, photo)
+        bot.send_photo(chat_id, get_asset('матраси.jpg'))
     elif call.data == "price3":
-    
-        with open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/коляскі.jpg', 'rb') as photo:
-            bot.send_photo(chat_id, photo)
+        bot.send_photo(chat_id, get_asset('коляскі.jpg'))
     elif call.data == "price4":
         try:
             media = [
-                InputMediaPhoto(open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/MyCollages (1).jpg', 'rb')),
-                InputMediaPhoto(open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/MyCollages (2).jpg', 'rb'))
-        ]
+                InputMediaPhoto(get_asset('MyCollages (1).jpg')),
+                InputMediaPhoto(get_asset('MyCollages (2).jpg'))
+            ]
             bot.send_media_group(chat_id, media)
         except FileNotFoundError:
-            bot.send_message(chat_id, "Один з файлів не знайдено.") 
-     
+            bot.send_message(chat_id, "Один з файлів не знайдено.")
 
-bot.message_handler(func=lambda message: user_data.get(message.from_user.id, {}).get("step") == "enter_dimensions")
+@bot.message_handler(func=lambda message: user_data.get(message.from_user.id, {}).get("step") == "enter_dimensions")
 def handle_dimensions(message):
     try:
         length, width = map(float, message.text.split())
         area = round(length * width, 2)  # Округляємо площу до 2 цифр після коми
-        price_per_m2 = user_data[message.from_user.id].get("price_per_m2", 110)  # За замовчуванням 85 грн/м²
+        price_per_m2 = user_data[message.from_user.id].get("price_per_m2", 110)  # За замовчуванням 110 грн/м²
         price = round(area * price_per_m2, 2)  # Округляємо ціну до 2 цифр після коми
         bot.send_message(message.chat.id, f"Площа килима: {area} кв.м\nЦіна за прання килима: {price} грн\n"
                                           f"Ціна може коливатися залежно від ступеня забруднення, наявності пластиліну, слайму, шерсті тварин.")
@@ -235,7 +221,6 @@ def handle_dimensions(message):
         user_data[message.from_user.id].pop("step", None)  
     except ValueError:
         bot.send_message(message.chat.id, "Неправильний формат введення. Введіть довжину і ширину килима через пробіл (наприклад, 2.5 3.2):")
-
 
 @bot.message_handler(content_types=['contact'])
 def handle_contact(message):
@@ -250,7 +235,6 @@ def handle_contact(message):
     
     bot.send_message(admin_chat_id, admin_message)
     bot.send_message(message.chat.id, "Ви успішно виконали замовлення, чекайте доки з вами зв'яжеться менеджер", reply_markup=keyboard)
-
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)
