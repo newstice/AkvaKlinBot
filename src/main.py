@@ -195,25 +195,25 @@ def handle_query(call):
                          ))
     elif call.data == "price":
         
-        with open('коври.jpg', 'rb') as photo:
+        with open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/коври.jpg', 'rb') as photo:
             bot.send_photo(chat_id, photo)
     elif call.data == "price1":
         
-        with open('меблі.jpg', 'rb') as photo:
+        with open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/меблі.jpg', 'rb') as photo:
             bot.send_photo(chat_id, photo)
     elif call.data == "price2":
     
-        with open('матраси.jpg', 'rb') as photo:
+        with open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/матраси.jpg', 'rb') as photo:
             bot.send_photo(chat_id, photo)
     elif call.data == "price3":
     
-        with open('коляскі.jpg', 'rb') as photo:
+        with open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/коляскі.jpg', 'rb') as photo:
             bot.send_photo(chat_id, photo)
     elif call.data == "price4":
         try:
             media = [
-                InputMediaPhoto(open('MyCollages (1).jpg', 'rb')),
-                InputMediaPhoto(open('MyCollages (2).jpg', 'rb'))
+                InputMediaPhoto(open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/MyCollages (1).jpg', 'rb')),
+                InputMediaPhoto(open('D:/AkvaKlin/Bot/AkvaKlinBot-main/assets/MyCollages (2).jpg', 'rb'))
         ]
             bot.send_media_group(chat_id, media)
         except FileNotFoundError:
